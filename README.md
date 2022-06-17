@@ -21,8 +21,9 @@ REACT_APP_GOOGLE_MAP_API_KEP=<Your_API_KEY>
 
 Open http://localhost:3000 with your browser to see the result.
 
-##deployment 
-Also, you can check my demo here:
+##deployment
+
+Also, you can check my demo here(Desktop version only):
 [Demo](https://map-search-seven.vercel.app/)
 
 ## Tech Stack
