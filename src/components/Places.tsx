@@ -6,10 +6,23 @@ import usePlacesAutocomplete, {
 } from "use-places-autocomplete";
 import { AutoComplete, Button, Form, Space } from "antd";
 import { SearchOutlined, AimOutlined } from "@ant-design/icons";
+import { MarkerType, LatLngLiteral } from "./interface";
 
-// type PlacesProps = {
-//   setMarker: (position: google.maps.LatLngLiteral) => void;
-// };
+interface PlacesMarker {
+  find: Function;
+}
+
+interface PlacesType {
+  markers: PlacesMarker;
+  setMarker: Function;
+  handleCenterState: (body: LatLngLiteral) => void;
+  fetchTimeZoneAndLocalTime: (
+    latLng: LatLngLiteral
+  ) => Promise<
+    { timeZoneName: any; localTime: string; createAt: string } | undefined
+  >;
+  getUserLocation: () => void;
+}
 
 const SearchForm = styled(Form)`
   padding: 2rem;
@@ -28,7 +41,7 @@ export default function Places({
   handleCenterState,
   fetchTimeZoneAndLocalTime,
   getUserLocation,
-}: any) {
+}: PlacesType) {
   const [alert, setAlert] = useState<Boolean>(false);
   const { Option } = AutoComplete;
   const {
@@ -65,10 +78,10 @@ export default function Places({
         createdAt: data?.createAt,
       };
       const newMarker = markers.find(
-        (location: any) => location.id === marker.id
+        (location: MarkerType) => location.id === marker.id
       );
       if (!newMarker) {
-        setMarker((prepMarkers: any) => [marker, ...prepMarkers]);
+        setMarker((prepMarkers: MarkerType[]) => [marker, ...prepMarkers]);
         handleCenterState(marker.latLng);
         setAlert(false);
       } else {

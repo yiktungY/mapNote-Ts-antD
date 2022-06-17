@@ -1,11 +1,12 @@
 import { GoogleMap, Marker } from "@react-google-maps/api";
-import { useRef, useCallback, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import { Space } from "antd";
 
 import Places from "./Places";
 import SearchHistory from "./SearchHistory";
-import { Space } from "antd";
+import { LatLngLiteral, MarkerType, GeolocationType } from "./interface";
 
 const RootBox = styled.div`
   display: flex;
@@ -33,18 +34,15 @@ export const TextBox = styled.div`
   flex-direction: column;
   justify-content: space-between;
 `;
-type LatLngLiteral = google.maps.LatLngLiteral;
 
 export default function Map() {
-  const [markers, setMarkers] = useState<any[]>([]);
+  const [markers, setMarkers] = useState<MarkerType[]>([]);
   const [center, setCenter] = useState<LatLngLiteral>({
     lat: 43,
     lng: -79,
   });
-  const mapRef = useRef<GoogleMap>();
-  const onLoad = useCallback((map: any) => (map.current = map), []);
 
-  const fetchTimeZoneAndLocalTime = async (latLng: any) => {
+  const fetchTimeZoneAndLocalTime = async (latLng: LatLngLiteral) => {
     try {
       const date = new Date();
       const unixTime = date.getTime() / 1000 + date.getTimezoneOffset() * 60;
@@ -63,7 +61,7 @@ export default function Map() {
   };
   const getUserLocation = () => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position: any) => {
+      navigator.geolocation.getCurrentPosition((position: GeolocationType) => {
         setCenter({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
@@ -74,7 +72,7 @@ export default function Map() {
     }
   };
 
-  const deletAddress = (selectAddress: any[]) => {
+  const deletAddress = (selectAddress: string[]) => {
     const newMarkers = markers.filter(
       (location) => !selectAddress.includes(location.address)
     );
@@ -92,9 +90,8 @@ export default function Map() {
           fetchTimeZoneAndLocalTime={fetchTimeZoneAndLocalTime}
           handleCenterState={handleCenterState}
           getUserLocation={getUserLocation}
-          setMarker={(position: any) => {
+          setMarker={(position: MarkerType[]) => {
             setMarkers(position);
-            mapRef.current?.panTo(position);
           }}
         />
 
@@ -112,7 +109,6 @@ export default function Map() {
           zoom={12}
           center={center}
           mapContainerClassName="map-container"
-          onLoad={onLoad}
         >
           {markers &&
             markers.map((location) => (
