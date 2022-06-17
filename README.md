@@ -12,7 +12,7 @@ yarn start
 ```
 
 ## To access google-map-api
-Using Google-Map-Api(https://developers.google.com/maps/documentation/javascript/get-api-key) to get your own key and create a env file
+Using [Google-Map-Api](https://developers.google.com/maps/documentation/javascript/get-api-key) to get your own key and create a env file
 
 ```bash
 REACT_APP_GOOGLE_MAP_API_KEP=<Your_API_KEY>
@@ -21,8 +21,9 @@ REACT_APP_GOOGLE_MAP_API_KEP=<Your_API_KEY>
 
 Open http://localhost:3000 with your browser to see the result.
 
-##deployment Demo
-
+##deployment 
+Also, you can check my demo here:
+[Demo](https://map-search-seven.vercel.app/)
 
 ## Tech Stack
 - TypeScript
