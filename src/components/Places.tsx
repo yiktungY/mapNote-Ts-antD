@@ -4,7 +4,7 @@ import usePlacesAutocomplete, {
   getGeocode,
   getLatLng,
 } from "use-places-autocomplete";
-import { AutoComplete, Button, Form, Space } from "antd";
+import { AutoComplete, Button, Form, Space, Spin } from "antd";
 import { SearchOutlined, AimOutlined } from "@ant-design/icons";
 import { MarkerType, LatLngLiteral } from "./interface";
 
@@ -15,6 +15,7 @@ interface PlacesMarker {
 interface PlacesType {
   markers: PlacesMarker;
   setMarker: Function;
+  fetching: Boolean;
   handleCenterState: (body: LatLngLiteral) => void;
   fetchTimeZoneAndLocalTime: (
     latLng: LatLngLiteral
@@ -38,6 +39,7 @@ const AlertText = styled.p`
 export default function Places({
   setMarker,
   markers,
+  fetching,
   handleCenterState,
   fetchTimeZoneAndLocalTime,
   getUserLocation,
@@ -114,7 +116,10 @@ export default function Places({
         <Button htmlType="submit" type="primary" icon={<SearchOutlined />}>
           Search
         </Button>
-        <Button onClick={getUserLocation} icon={<AimOutlined />}>
+        <Button
+          onClick={getUserLocation}
+          icon={fetching ? <Spin size="small" /> : <AimOutlined />}
+        >
           Show My Location
         </Button>
       </Space>

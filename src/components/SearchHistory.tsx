@@ -1,9 +1,10 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { Checkbox, Pagination, Button, Divider, Row, Col } from "antd";
+import { Checkbox, Pagination, Divider, Row, Col } from "antd";
 import type { CheckboxValueType } from "antd/es/checkbox/Group";
 
 import { TextBox } from "./Map";
+import ModalComponent from "./ModalComponent";
 
 interface SearchMarkerType {
   length?: number;
@@ -22,16 +23,24 @@ export interface CurrentAddressType {
   localTime: string;
   children?: JSX.Element | JSX.Element[];
 }
-
-const pageSize = 10;
-
 const Line = styled(Divider)`
   width: 15rem;
 `;
 
-const DeleteButton = styled(Button)`
-  margin: 1rem 0 1rem 10rem;
+const RowBox = styled(Row)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid silver;
 `;
+const pageSize = 5;
+const deleteText = {
+  title: "Confirm Delete",
+  text: "Are you sure to delete the markers? After you delete this, it can't be recovered.",
+  processingText: "Deleting...",
+};
 
 export default function SearchHistory({
   markers,
@@ -52,18 +61,27 @@ export default function SearchHistory({
     setCurrentPage(page);
   };
 
-  const handleDelect = () => {
+  const handleDelete = () => {
     deletAddress(selectValue);
   };
 
   return (
     <TextBox>
       {selectValue.length > 0 && (
-        <DeleteButton type="primary" danger onClick={handleDelect}>
-          Delete Location
-        </DeleteButton>
+        <RowBox>
+          <Col>
+            {selectValue.length} of {markers.length} selected
+          </Col>
+          <ModalComponent
+            action={handleDelete}
+            title={deleteText.title}
+            text={deleteText.text}
+            processingText={deleteText.processingText}
+          />
+        </RowBox>
       )}
       <Checkbox.Group onChange={handleSelect}>
+        <h2>Search History</h2>
         {currentAddress.map((location: CurrentAddressType, index: number) => (
           <Checkbox key={location.id} value={location.address}>
             {location.address}

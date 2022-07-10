@@ -14,7 +14,7 @@ const Loading = styled.div`
 
 export default function Home() {
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAP_API_KEP ?? "",
+    googleMapsApiKey: "AIzaSyCAy0Lm3QtsydKhWLc-OeKYq4VngcuYrpU",
     libraries: ["places"],
   });
 

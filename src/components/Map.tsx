@@ -11,6 +11,10 @@ import { LatLngLiteral, MarkerType, GeolocationType } from "./interface";
 const RootBox = styled.div`
   display: flex;
   flex-direction: row;
+  @media screen and (max-width: 500px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const InputBox = styled(Space)`
@@ -41,13 +45,14 @@ export default function Map() {
     lat: 43,
     lng: -79,
   });
+  const [fetching, setFetching] = useState<Boolean>(false);
 
   const fetchTimeZoneAndLocalTime = async (latLng: LatLngLiteral) => {
     try {
       const date = new Date();
       const unixTime = date.getTime() / 1000 + date.getTimezoneOffset() * 60;
       const { data } = await axios.get(
-        `https://maps.googleapis.com/maps/api/timezone/json?location=${latLng.lat},${latLng.lng}&timestamp=${unixTime}&key=${process.env.REACT_APP_GOOGLE_MAP_API_KEP}`
+        `https://maps.googleapis.com/maps/api/timezone/json?location=${latLng.lat},${latLng.lng}&timestamp=${unixTime}&key=AIzaSyCAy0Lm3QtsydKhWLc-OeKYq4VngcuYrpU`
       );
       const { dstOffset, rawOffset, timeZoneName } = data;
       const localDate = new Date((unixTime + dstOffset + rawOffset) * 1000);
@@ -59,14 +64,18 @@ export default function Map() {
       console.log(err);
     }
   };
-  const getUserLocation = () => {
+  const getUserLocation = async () => {
     if (navigator.geolocation) {
+      setFetching(true);
       navigator.geolocation.getCurrentPosition((position: GeolocationType) => {
         setCenter({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
       });
+      setTimeout(() => {
+        setFetching(false);
+      }, 2000);
     } else {
       alert("Geolocation is not supported by your browser");
     }
@@ -93,6 +102,7 @@ export default function Map() {
           setMarker={(position: MarkerType[]) => {
             setMarkers(position);
           }}
+          fetching={fetching}
         />
 
         {markers.length > 0 ? (
