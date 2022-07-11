@@ -81,7 +81,6 @@ export default function SearchHistory({
         </RowBox>
       )}
       <Checkbox.Group onChange={handleSelect}>
-        <h2>Search History</h2>
         {currentAddress.map((location: CurrentAddressType, index: number) => (
           <Checkbox key={location.id} value={location.address}>
             {location.address}

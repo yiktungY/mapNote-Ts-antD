@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import { useState } from "react";
 import usePlacesAutocomplete, {
   getGeocode,
   getLatLng,
 } from "use-places-autocomplete";
-import { AutoComplete, Button, Form, Space, Spin } from "antd";
+import { AutoComplete, Button, Form, Spin, message } from "antd";
+import { HddTwoTone } from "@ant-design/icons";
 import { SearchOutlined, AimOutlined } from "@ant-design/icons";
 import { MarkerType, LatLngLiteral } from "./interface";
 
@@ -16,6 +16,7 @@ interface PlacesType {
   markers: PlacesMarker;
   setMarker: Function;
   fetching: Boolean;
+  handleDrawer: () => void;
   handleCenterState: (body: LatLngLiteral) => void;
   fetchTimeZoneAndLocalTime: (
     latLng: LatLngLiteral
@@ -26,14 +27,39 @@ interface PlacesType {
 }
 
 const SearchForm = styled(Form)`
-  padding: 2rem;
   display: flex;
-  flex-direction: column;
-  height: 10rem;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
-const AlertText = styled.p`
-  color: red;
-  margin: 1rem;
+
+const SearchButton = styled(Button)`
+  margin-left: 1rem;
+  margin-right: 1rem;
+  @media screen and (max-width: 768px) {
+    margin-left: 0;
+  }
+`;
+
+const Box = styled.div`
+  width: 30rem;
+  margin: 1rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  @media screen and (max-width: 500px) {
+    width: 100vw;
+    display: flex;
+    padding: 1rem 3rem;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 10rem;
+  }
 `;
 
 export default function Places({
@@ -43,8 +69,8 @@ export default function Places({
   handleCenterState,
   fetchTimeZoneAndLocalTime,
   getUserLocation,
+  handleDrawer,
 }: PlacesType) {
-  const [alert, setAlert] = useState<Boolean>(false);
   const { Option } = AutoComplete;
   const {
     ready,
@@ -85,9 +111,9 @@ export default function Places({
       if (!newMarker) {
         setMarker((prepMarkers: MarkerType[]) => [marker, ...prepMarkers]);
         handleCenterState(marker.latLng);
-        setAlert(false);
+        message.success("Location saved!");
       } else {
-        setAlert(true);
+        message.error("This address has already been saved!");
         handleCenterState(marker.latLng);
       }
     } catch (err) {
@@ -99,7 +125,7 @@ export default function Places({
     <SearchForm onFinish={handleOnSearch}>
       <AutoComplete
         value={value}
-        style={{ width: 295, marginBottom: 20 }}
+        style={{ width: 300 }}
         onSelect={handleOnSelect}
         disabled={!ready}
         onChange={handleOnChange}
@@ -112,18 +138,24 @@ export default function Places({
             </Option>
           ))}
       </AutoComplete>
-      <Space size="large">
-        <Button htmlType="submit" type="primary" icon={<SearchOutlined />}>
+      <Box>
+        <SearchButton
+          htmlType="submit"
+          type="primary"
+          icon={<SearchOutlined />}
+        >
           Search
-        </Button>
+        </SearchButton>
         <Button
           onClick={getUserLocation}
           icon={fetching ? <Spin size="small" /> : <AimOutlined />}
         >
           Show My Location
         </Button>
-      </Space>
-      {alert && <AlertText>This address has already been saved!</AlertText>}
+        <Button icon={<HddTwoTone />} onClick={handleDrawer}>
+          Manage Markers
+        </Button>
+      </Box>
     </SearchForm>
   );
 }

@@ -2,7 +2,7 @@ import { GoogleMap, Marker } from "@react-google-maps/api";
 import { useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
-import { Space } from "antd";
+import { Space, Drawer, message } from "antd";
 
 import Places from "./Places";
 import SearchHistory from "./SearchHistory";
@@ -10,11 +10,8 @@ import { LatLngLiteral, MarkerType, GeolocationType } from "./interface";
 
 const RootBox = styled.div`
   display: flex;
-  flex-direction: row;
-  @media screen and (max-width: 500px) {
-    flex-direction: column;
-    align-items: center;
-  }
+  flex-direction: column;
+  align-items: center;
 `;
 
 const InputBox = styled(Space)`
@@ -31,7 +28,6 @@ const MapBox = styled.div`
 export const TextBox = styled.div`
   min-height: 10rem;
   width: 20rem;
-  border: 1px dashed silver;
   padding: 2rem 1rem;
   background-color: white;
   display: flex;
@@ -45,7 +41,8 @@ export default function Map() {
     lat: 43,
     lng: -79,
   });
-  const [fetching, setFetching] = useState<Boolean>(false);
+  const [fetching, setFetching] = useState<boolean>(false);
+  const [openDrawer, setOpenDrawer] = useState<boolean>(false);
 
   const fetchTimeZoneAndLocalTime = async (latLng: LatLngLiteral) => {
     try {
@@ -64,6 +61,7 @@ export default function Map() {
       console.log(err);
     }
   };
+
   const getUserLocation = async () => {
     if (navigator.geolocation) {
       setFetching(true);
@@ -77,7 +75,7 @@ export default function Map() {
         setFetching(false);
       }, 2000);
     } else {
-      alert("Geolocation is not supported by your browser");
+      message.error("Geolocation is not supported by your browser");
     }
   };
 
@@ -91,6 +89,18 @@ export default function Map() {
   const handleCenterState = (body: LatLngLiteral) => {
     setCenter(body);
   };
+
+  const handleDrawer = () => {
+    if (!openDrawer) {
+      setOpenDrawer(true);
+    } else {
+      setOpenDrawer(false);
+    }
+  };
+
+  const handleOnClose = () => {
+    setOpenDrawer(false);
+  };
   return (
     <RootBox>
       <InputBox size={"small"}>
@@ -103,17 +113,23 @@ export default function Map() {
             setMarkers(position);
           }}
           fetching={fetching}
+          handleDrawer={handleDrawer}
         />
-
-        {markers.length > 0 ? (
-          <SearchHistory deletAddress={deletAddress} markers={markers} />
-        ) : (
-          <TextBox>
-            <h2>Search History</h2>
+        <Drawer
+          title="Search History"
+          placement="right"
+          closable={true}
+          visible={openDrawer}
+          onClose={handleOnClose}
+        >
+          {markers.length > 0 ? (
+            <SearchHistory deletAddress={deletAddress} markers={markers} />
+          ) : (
             <p>Please search and add your first marker</p>
-          </TextBox>
-        )}
+          )}
+        </Drawer>
       </InputBox>
+
       <MapBox>
         <GoogleMap
           zoom={12}
