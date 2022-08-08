@@ -23,7 +23,7 @@ Open http://localhost:3000 with your browser to see the result.
 
 ##deployment
 
-Also, you can check my demo here(Desktop version only):
+Also, you can check my demo here:
 [Demo](https://map-search-seven.vercel.app/)
 
 ## Tech Stack
